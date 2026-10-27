@@ -36,9 +36,9 @@ yarn-error.log
 /.kiro
 /.pi
 /.mcp.json
-/AGENTS.md
-/CLAUDE.md
+# /AGENTS.md
+# /CLAUDE.md
 /boost.json
 /opencode.json
 /opencode.jsonc
-.claude
+# .claude
