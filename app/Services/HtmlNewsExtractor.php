@@ -99,8 +99,12 @@ class HtmlNewsExtractor
             $articles[$index]['snippet'] ??= $this->firstAttribute($crawler, 'meta[property="og:description"], meta[name="description"]', 'content');
 
             $articles[$index]['published_at'] ??= $this->parseDate(
-                $this->firstAttribute($crawler, 'meta[property="article:published_time"], meta[itemprop="datePublished"], meta[name="pubdate"]', 'content')
-                    ?? $this->firstAttribute($crawler, 'time[datetime]', 'datetime')
+                // 1. Try extracting date pattern directly from the URL slug first (e.g., 2026-10-27)
+                (preg_match('/(\d{4}-\d{2}-\d{2})/', $article['url'], $matches) ? $matches[1] : null)
+                    // 2. Look for time elements strictly inside main article blocks, avoiding footers/sidebars
+                    ?? $this->firstAttribute($crawler, 'article time[datetime], .news-detail time[datetime], .panel-body time[datetime]', 'datetime')
+                    // 3. Fallback to meta tags as a last resort
+                    ?? $this->firstAttribute($crawler, 'meta[property="article:published_time"], meta[itemprop="datePublished"]', 'content')
             );
         }
 
